@@ -1,0 +1,29 @@
+{% extends 'app/index.html' %}
+{% block content %}
+    <div class="container">
+        <div class="row" style="padding-top: 120px;padding-left: 15rem">
+            <div class="col" style="padding-left: 5rem">
+                <div class="card text-center" style="width: 10rem">
+                    <div class="card-body">
+                        <img src="https://i.ibb.co/0hXHf8x/dd.jpg" style="width: 120px" alt="">
+                        <a href="{% url 'cash-man' %}" class="btn btn-dark" style="font-size: 20px">ចងតុប្រុស</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col" style="padding-right: 15rem">
+                <div class="card text-center" style="width: 10rem;">
+                    <div  style="width: 10rem;">
+                        <div class="card-body">
+                            <img src="https://i.ibb.co/ZJFPNcJ/2cdcc274f06e9f463f9553cc37fa2c56.jpg" style="width: 120px" alt="">
+                            <a href="{% url 'cash-woman' %}" class="btn btn-dark" style="font-size: 20px">ចងតុស្រី</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% if total %}
+         <div  style="width: 25rem;margin-top: 1rem;margin-left: 24rem;padding-bottom: 1px;background-color: whitesmoke" class="alert alert-dark text-center" role="alert">ប្រាក់សរុបខាងប្រុសនិងស្រី <br>${{ total }}</div>
+
+    {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'app/home.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="container">
+    <form method="POST" style="margin-left: 25rem;margin-top: 10rem">
+        {% csrf_token %}
+        <h1>ពិតជាងចង់លុប?</h1>
+        <div style="margin-left: 5rem;font-size: 15px">
+            <button class="btn btn-outline-danger btn-sm mt-1" style="font-size: 25px" type="submit" value="Yes">លុប</button>
+        <a style="font-size: 25px" class="btn btn-outline-black btn-sm mt-1" href="{% url 'cash-man' %}">ត្រលប់</a>
+        </div>
+    </form>
+
+   </div>
+{% endblock %}

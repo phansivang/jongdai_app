@@ -1,0 +1,81 @@
+{% extends 'app/index.html'%}
+
+{% block content %}
+
+    <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+    <!-- Toggle button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Navbar brand -->
+      <a class="navbar-brand mt-2 mt-lg-0" href="#">
+        <img
+          src="https://img.icons8.com/plasticine/344/money.png"
+          height="50"
+          alt="MDB Logo"
+          loading="lazy"
+        />
+      </a>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
+        <li class="nav-item" >
+          <a class="nav-link"  href="{% url 'home' %}">ទំព័រដើម</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'total-cash' %}">ឆែកប្រាក់សរុប</a>
+        </li>
+        {% if request.path == '/cash-man/' %}
+        <li class="nav-item">
+            <a class="nav-link " >តុខាង ប្រុស</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+            <a class="nav-link "  >តុខាង ស្រី</a>
+        </li>
+    {% endif %}
+      <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">ចាកចេញ</a>
+        </li>
+
+      {% if count > 0 %}
+          {% if request.path == '/cash-man/' %}
+    <li class="nav-item">
+            <form action="{% url 'delete-all' %}">
+                <input class="nav-link "  style="border: 0.0px;background-color: transparent" type="submit" value="លុបតុទាំងអស់"
+                       onclick="return confirm('អ្នកពិតជាចងលុបតារាងតុទាំងអស់មែនទេ?')"
+                />
+            </form>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <form action="{% url 'delete-all-woman' %}">
+                <input class="nav-link" style="border: 0.0px;background-color: transparent" type="submit" value="លុបតុទាំងអស់"
+                       onclick="return confirm('អ្នកពិតជាចងលុបតារាងតុទាំងអស់មែនទេ?')"
+                />
+            </form>
+        </li>
+    {% endif %}
+      {% endif %}
+      </ul>
+
+    </div>
+    <!-- Collapsible wrapper -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+{% endblock %}

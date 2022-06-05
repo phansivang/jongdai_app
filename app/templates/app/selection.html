@@ -1,0 +1,9 @@
+{% extends 'app/index.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+    <form method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit">REGISTER</button>
+    </form>
+{% endblock %}

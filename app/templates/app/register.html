@@ -1,0 +1,25 @@
+{% extends 'app/index.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+    <div class="container" style="padding-left: 30rem;padding-top: 10rem">
+        <form method="POST" style="width: 25rem;font-size: 25px">
+            {% csrf_token %}
+            <div style="font-family: Arial,serif">
+                <label style="font-family: DaunPenh,serif"> ឈ្មោះអ្នកប្រើប្រាស់ </label>
+            <input class="form-control"  name="username">
+            <label style="font-family: DaunPenh,serif;">  ពាក្យសំងាត់ </label>
+                <input class="form-control" name="password1" type="password">
+             <label style="font-family: DaunPenh,serif;"> បញ្ជាក់ពាក្យសំងាត់ </label>
+                <input class="form-control" name="password2" type="password">
+                {% if 'username' in form.errors %}
+                   <center><label class="alert alert-danger " style="font-size: 20px;width: 25rem;font-family: DaunPenh,serif;height: 10px;margin-top: 10px;padding-bottom: 35px">ឈ្មោះអ្នកប្រើប្រាស់មានរួចហើយ ឈ្មោះត្រូវតែជាតួរអក្សរអង់គ្លេស !</label></center>
+                {% elif 'password2' in form.errors %}
+                    <center><label class="alert alert-danger " style="font-size: 20px;width: 25rem;font-family: DaunPenh,serif;height: 10px;margin-top: 10px;padding-bottom: 35px">ពាក្យសំងាត់មិនត្រូវគ្នាឬតិចជាង ៨ ខ្ទង់ សូមបញ្ចូលលេខលាយជាមួយតួរអក្សរ !</label></center>
+                {% endif %}
+            </div>
+            <br>
+            <button class="btn btn-dark" type="submit">ចុះឈ្មោះ</button>
+            <a style="font-size: 20px" href="{% url 'login' %}" class="btn btn-silver" type="submit">ចូលប្រើ</a>
+        </form>
+    </div>
+{% endblock %}

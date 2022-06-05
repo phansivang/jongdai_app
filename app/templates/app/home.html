@@ -1,0 +1,67 @@
+{%extends 'app/index.html'%}
+{% load crispy_forms_filters %}
+{% block content %}
+    <div class="container-sm" style="padding-top: 1rem">
+        {% include 'app/navbar.html' %}
+        <div class="row" style="padding-top: 1rem">
+            <div class="col">
+                <table class="table table-hover border" style="font-size: 25px">
+                    <thead>
+                    <tr>
+                        <th scope="col">លេខ</th>
+                        <th scope="col">ភ្ញៀវ</th>
+                        <th scope="col">ដុល្លារ</th>
+                        <th scope="col">រៀល</th>
+                        <th scope="col">កាលបរិច្ឆេទ</th>
+                        <th scope="col">ភេទ</th>
+                        <th scope="col">លុប</th>
+                    </tr>
+                    </thead>
+                    {% for i in items %}
+                        <tbody style="font-size: 13px;font-family:Arial,serif" class=".table-hover">
+                        <tr>
+                            <th scope="row">{{ i.pk }}</th>
+                            <td>{{ i.guest_name }}</td>
+                            <td>{{ i.dollar }}</td>
+                            <td>{{ i.riel }}</td>
+                            <td>{{ i.date }}</td>
+                            <td style="font-family: DaunPenh,serif;font-size: 23px">{{ i.sex }}</td>
+                            <td><a style="font-size: 10px" type="submit" href="{{ i.pk }}/delete" class="btn btn-dark">លុប</a></td>
+                        </tr>
+                        </tbody>
+                    {% endfor %}
+                </table>
+                {% if count > 0 %}
+                    <div style="font-size: 25px;background-color: #fafafa" class="alert alert-dark text-center" role="alert">ប្រាក់ដុល្លារ <a style="color: green"> {{ total_dollar }}</a> ប្រាក់រៀល ៛<a style="color: green">{{ total_riel }}</a>  ចំនួនភ្ញៀវសរុប  <a style="color: green">{{ count }}</a> លុយសរុបខ្មែរនិងដុល្លារ <a style="color: green">{{ total_all }}</a></div>
+
+            {% endif %}
+            </div>
+            <div class="col border">
+               <form method="POST" style="font-size: 25px;width: 15rem">
+                   {% csrf_token %}
+                   {{ form|crispy }}
+                   <br>
+                   <button class="btn btn-dark" type="submit" style="font-size: 20px">បញ្ចូល</button>
+               </form>
+                <br>
+                <nav aria-label="Page navigation example ">
+  <ul class="pagination  pagination-sm ">
+  {% if page.has_previous %}
+    <li class="page-item ">
+      <a class="page-link" style="font-size: 15px" href="?page={{ page.previous_page_number }}" tabindex="-1">Previous</a>
+    </li>
+  {% endif %}
+      {% for i in page_rang.page_range %}
+    <li class="page-item"><a style="font-size: 15px" class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+  {% endfor %}
+  {% if page.has_next %}
+    <li class="page-item">
+      <a style="font-size: 15px" class="page-link" href="?page={{ page.next_page_number }}">Next</a>
+    </li>
+  {% endif %}
+  </ul>
+</nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

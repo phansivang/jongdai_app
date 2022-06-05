@@ -1,0 +1,31 @@
+{% extends 'app/index.html' %}
+{% load crispy_forms_filters %}
+{% block content %}
+    <div class="container" style="padding-left: 30rem;padding-top: 10rem">
+        <form method="POST" style="width: 25rem">
+            {% csrf_token %}
+            <div style="font-family:Arial,serif">
+                <label style="font-family: DaunPenh,serif;font-size: 25px">ឈ្មោះអ្នកប្រើប្រាស់</label>
+                <input type="text" class="form-control" id="{{ form.username.id_for_label }}" name="username">
+                <label style="font-family: DaunPenh,serif;font-size: 25px">ពាក្យសំងាត់</label>
+                <input type="password" class="form-control" id="{{ form.password.id_for_label }}" name="password">
+                {% if form.errors %}
+                    <center><label class="alert alert-danger " style="font-size: 20px;width: 25rem;font-family: DaunPenh,serif;height: 10px;margin-top: 10px;padding-bottom: 35px">ពាក្យសំងាត់ខុសឬគណនាអ្នកមិនត្រឹមត្រូវ !</label></center>
+                {% endif %}
+            </div>
+        <br>
+            <button style="font-size: 20px;width: 50px;font-family: DaunPenh,serif" class="btn btn-dark" type="submit">ចូល</button>
+            <a href="{% url 'register' %}" style="font-size: 20px;width: 90px;font-family: DaunPenh,serif"  class="btn btn-silver" type="submit">ចុះឈ្មោះ</a>
+        </form>
+        <br>
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags %}
+                {% endif %}
+                <div class="alert alert-success text-center" role="alert" style="width: 20rem;padding-bottom: 15px">
+                    <a style="font-size: 20px">{{ message }}</a>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
