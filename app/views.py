@@ -1,140 +1,100 @@
-from django.shortcuts import render,redirect
-from .forms import register,add_item
-from .models import cash_male,cash_female
-from django.contrib.auth.admin import User
-from django.core.paginator import Paginator
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import DeleteView
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DeleteView
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from .forms import RegisterForm, AddItemForm
+from .models import CashMale, CashFemale
 
 @login_required(login_url='login/')
 def home(request):
-    return render(request,'app/dashboad.html')
+    return render(request, 'app/dashboard.html')
 
 def register_page(request):
-    if request.method =='POST':
-        form = register(request.POST)
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'ចុះឈ្មោះទទួលបានជោគជ័យ !')
             return redirect('/login')
     else:
-        form = register()
-    return render(request,'app/register.html',{'form':form})
+        form = RegisterForm()
+    return render(request, 'app/register.html', {'form': form})
 
+@login_required(login_url='/login')
+def cash_page(request, model):
+    items = model.objects.filter(author=request.user)
+    count = items.count()
+    paginator = Paginator(items, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.page(page_number)
+
+    total_dollar = sum(item.dollar for item in items)
+    total_riel = sum(item.riel for item in items)
+    total_all = total_riel / 4100 + total_dollar
+
+    if request.method == 'POST':
+        form = AddItemForm(request.POST)
+        if form.is_valid():
+            new_item = form.save(commit=False)
+            new_item.author = request.user
+            new_item.save()
+            return redirect(request.path)
+    else:
+        form = AddItemForm()
+
+    context = {
+        'items': page_obj,
+        'form': form,
+        'total_riel': "{:,.0f}".format(total_riel),
+        'total_dollar': "${:,.2f}".format(total_dollar),
+        'count': count,
+        'total_all': "${:,.2f}".format(total_all),
+        'page': page_obj,
+        'page_range': paginator.page_range,
+    }
+    return render(request, 'app/home.html', context)
 
 @login_required(login_url='/login')
 def cash_male_page(request):
-    base_male = cash_male.objects.filter(author=request.user.id)
-    count = cash_male.objects.filter(author=request.user.id).count()
-    page = Paginator(base_male,10)
-    page_get = request.GET.get('page',1)
-    page_list = page.page(page_get)
-    dolloar = []
-    reil = []
-    for i in base_male:
-        dolloar.append(i.dollar)
-        reil.append(i.riel)
-    total_dollar = sum(dolloar)
-    total_riel = sum(reil)
-    dollar = "${:,.2f}".format(total_dollar)
-    riel = "{:,.0f}".format(total_riel)
-    total_all = total_riel / 4100 + total_dollar
-    total_all2 = "${:,.2f}".format(total_all)
-    if request.method =='POST':
-        quest_name = request.POST.get('guest_name')
-        dollar1 = request.POST.get('dollar')
-        riel = request.POST.get('riel')
-        sex = request.POST.get('sex')
-        user = User.objects.filter(username=request.user.username).first()
-        add_new_item = cash_male.objects.create(guest_name=quest_name,dollar=dollar1,riel=riel,author=user,sex=sex)
-        form = add_item(request.POST)
-        if form.is_valid():
-            add_new_item.save()
-            return redirect('/cash-man')
-    form = add_item()
-    return render(request,'app/home.html',{'items':page_list,'form':form,'total_riel':riel,'total_dollar':dollar,'count':count,'total_all':total_all2,'page':page_list,'page_rang':page})
+    return cash_page(request, CashMale)
 
 @login_required(login_url='/login')
-def cash_woman_page(request):
-    base_male = cash_female.objects.filter(author=request.user.id)
-    count = cash_female.objects.filter(author=request.user.id).count()
-    page = Paginator(base_male, 10)
-    page_get = request.GET.get('page', 1)
-    page_list = page.page(page_get)
-    dolloar = []
-    reil = []
-    for i in base_male:
-        dolloar.append(i.dollar)
-        reil.append(i.riel)
-    total_dollar = sum(dolloar)
-    total_riel = sum(reil)
-    dollar = "${:,.2f}".format(total_dollar)
-    riel = "{:,.0f}".format(total_riel)
-    total_all = total_riel / 4100 + total_dollar
-    total_all2 = "${:,.2f}".format(total_all)
-    if request.method == 'POST':
-        quest_name = request.POST.get('guest_name')
-        dollar1 = request.POST.get('dollar')
-        riel = request.POST.get('riel')
-        sex = request.POST.get('sex')
-        user = User.objects.filter(username=request.user.username).first()
-        add_new_item = cash_female.objects.create(guest_name=quest_name, dollar=dollar1, riel=riel, author=user, sex=sex)
-        form = add_item(request.POST)
-        if form.is_valid():
-            add_new_item.save()
-            return redirect('/cash-woman')
-    form = add_item()
-    return render(request, 'app/home.html',
-                  {'items': page_list, 'form': form, 'total_riel': riel, 'total_dollar': dollar, 'count': count,
-                   'total_all': total_all2, 'page': page_list, 'page_rang': page})
-
-
+def cash_female_page(request):
+    return cash_page(request, CashFemale)
 
 @login_required(login_url='/login')
 def total_cash(request):
-    base_male = cash_male.objects.filter(author=request.user.id)
-    dolloar = []
-    reil = []
-    for i in base_male:
-        dolloar.append(i.dollar)
-        reil.append(i.riel)
-    total_dollar = sum(dolloar)
-    total_riel = sum(reil)
-    total_all2 = total_riel / 4100 + total_dollar
+    male_total = sum(item.dollar + item.riel / 4100 for item in CashMale.objects.filter(author=request.user))
+    female_total = sum(item.dollar + item.riel / 4100 for item in CashFemale.objects.filter(author=request.user))
+    total = male_total + female_total
+    return render(request, 'app/dashboard.html', {'total': "${:,.2f}".format(total)})
 
-    base_male = cash_female.objects.filter(author=request.user.id)
-    dolloar = []
-    reil = []
-    for i in base_male:
-        dolloar.append(i.dollar)
-        reil.append(i.riel)
-    total_dollar = sum(dolloar)
-    total_riel = sum(reil)
-    total_all = total_riel / 4100 + total_dollar
-    x = total_all + total_all2
-    y ="{:,.2f}".format(x)
-    return render(request,'app/dashboad.html',{'total':y})
+class DeleteCashItem(LoginRequiredMixin, DeleteView):
+    context_object_name = 'delete'
 
+    def get_success_url(self):
+        return self.success_url
 
-class deleteman(LoginRequiredMixin,DeleteView):
-    model = cash_male
+class DeleteCashMale(DeleteCashItem):
+    model = CashMale
     success_url = "/cash-man"
-    context_object_name = 'delete'
 
-class deletewoman(LoginRequiredMixin,DeleteView):
-    model = cash_female
+class DeleteCashFemale(DeleteCashItem):
+    model = CashFemale
     success_url = "/cash-woman"
-    context_object_name = 'delete'
 
-def delete_all(request):
-        user = cash_male.objects.filter(author=request.user.id)
-        user.delete()
-        return redirect('/cash-man')
+@login_required(login_url='/login')
+def delete_all(request, model, redirect_url):
+    model.objects.filter(author=request.user).delete()
+    return redirect(redirect_url)
 
+@login_required(login_url='/login')
+def delete_all_male(request):
+    return delete_all(request, CashMale, '/cash-man')
 
-def delete_all_woman(request):
-    user = cash_female.objects.filter(author=request.user.id)
-    user.delete()
-    return redirect('/cash-woman')
+@login_required(login_url='/login')
+def delete_all_female(request):
+    return delete_all(request, CashFemale, '/cash-woman')
